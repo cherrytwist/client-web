@@ -290,6 +290,9 @@
           "buttons": {
             "edit": {
               "tooltip": "Edit challenge context"
+            },
+            "newwhiteboard": {
+              "tooltip": "New Whiteboard"
             }
           }
         },

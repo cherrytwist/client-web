@@ -122,8 +122,16 @@ const Opportunity: FC<OpportunityPageProps> = ({
 
   const actorGroups = context?.ecosystemModel?.actorGroups || [];
 
-  const { references, background = '', tagline, who = '', impact = '', vision = '', aspects = [], visual } =
-    context || {};
+  const {
+    references,
+    background = '',
+    tagline,
+    who = '',
+    impact = '',
+    vision = '',
+    aspects = [],
+    visual,
+  } = context || {};
   const meme = references?.find(x => x.name === 'meme');
   const links = references?.filter(x => ['poster', 'meme'].indexOf(x.name) === -1);
   const isMemberOfOpportunity = relations.find(r => r.actorName === userName);

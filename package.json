@@ -33,6 +33,7 @@
     "bootstrap-icons": "1.1.0",
     "clamp-js": "^0.7.0",
     "clsx": "^1.1.1",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "d3": "^7.0.0",
     "dotenv-flow": "^3.2.0",
@@ -42,6 +43,7 @@
     "graphql": "^15.4.0",
     "i18next": "^20.0.0",
     "jquery": "^3.5.1",
+    "node-fetch": "^2.6.1",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.1",
     "react-cookie-consent": "^6.2.4",
@@ -76,6 +78,7 @@
     "lint": "tsc --noEmit && eslint src/**/*.ts{,x}",
     "lint:prod": "tsc --noEmit && cross-env NODE_ENV=production eslint src/**/*.ts{,x}",
     "lint:fix": "tsc --noEmit && eslint src/**/*.ts{,x} --fix",
+    "lint:fix:js": "tsc --noEmit && eslint src/setupProxy.js --fix",
     "gulp": "gulp"
   },
   "browserslist": {

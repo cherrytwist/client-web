@@ -2,6 +2,7 @@ import { ReactComponent as FileEarmarkIcon } from 'bootstrap-icons/icons/file-ea
 import { ReactComponent as GemIcon } from 'bootstrap-icons/icons/gem.svg';
 import { ReactComponent as JournalBookmarkIcon } from 'bootstrap-icons/icons/journal-text.svg';
 import { ReactComponent as Edit } from 'bootstrap-icons/icons/pencil-square.svg';
+import { ReactComponent as NewWhiteboard } from 'bootstrap-icons/icons/clipboard-plus.svg';
 import clsx from 'clsx';
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -11,6 +12,7 @@ import ActivityCard, { ActivityCardItem } from '../components/ActivityPanel';
 import ChallengeCommunitySection from '../components/Challenge/ChallengeCommunitySection';
 import OpportunityCard from '../components/Challenge/OpportunityCard';
 import ContextEdit from '../components/ContextEdit';
+import NewWhiteboardModal from '../components/Challenge/NewWhiteboardModal';
 import Button from '../components/core/Button';
 import { CardContainer } from '../components/core/Container';
 import Divider from '../components/core/Divider';
@@ -143,6 +145,7 @@ const Challenge: FC<ChallengePageProps> = ({ paths, challenge }): React.ReactEle
   const { ecoverseId = '' } = useParams<Params>();
 
   const [isEditOpened, setIsEditOpened] = useState<boolean>(false);
+  const [isNewWhiteboardOpened, setIsNewWhiteboardOpened] = useState<boolean>(false);
 
   const opportunityRef = useRef<HTMLDivElement>(null);
   useUpdateNavigation({ currentPaths: paths });
@@ -238,6 +241,32 @@ const Challenge: FC<ChallengePageProps> = ({ paths, challenge }): React.ReactEle
               className="flex-grow-1"
               classes={{ color: (theme: Theme) => theme.palette.neutralLight }}
             />
+            {user?.isAdmin && (
+              <>
+                <OverlayTrigger
+                  placement={'bottom'}
+                  overlay={
+                    <Tooltip id={'New whiteboard'}>
+                      {t('pages.challenge.sections.header.buttons.newwhiteboard.tooltip')}
+                    </Tooltip>
+                  }
+                >
+                  <NewWhiteboard
+                    color={'white'}
+                    width={20}
+                    height={20}
+                    className={styles.edit}
+                    onClick={() => setIsNewWhiteboardOpened(true)}
+                  />
+                </OverlayTrigger>
+                <NewWhiteboardModal
+                  show={isNewWhiteboardOpened}
+                  onHide={() => setIsNewWhiteboardOpened(false)}
+                  ecoverseId={ecoverseId}
+                  challengeId={id}
+                />
+              </>
+            )}
             {user?.isAdmin && (
               <>
                 <OverlayTrigger

@@ -68,7 +68,11 @@ const EcoversePage: FC<EcoversePageProps> = ({ paths, ecoverse }): React.ReactEl
 
   const { data: _projectsNestHistory } = useProjectsChainHistoryQuery({ variables: { ecoverseId } });
 
-  const { data: _challenges, error: challengesError, loading: isChallengeLoading } = useChallengesWithActivityQuery({
+  const {
+    data: _challenges,
+    error: challengesError,
+    loading: isChallengeLoading,
+  } = useChallengesWithActivityQuery({
     variables: { ecoverseId },
   });
   const challenges = _challenges?.ecoverse?.challenges || [];
