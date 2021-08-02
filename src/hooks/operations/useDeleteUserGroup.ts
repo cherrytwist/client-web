@@ -4,6 +4,7 @@ import { useDeleteGroupMutation } from '../generated/graphql';
 import { DeleteGroupMutation } from '../../models/graphql-schema';
 import { useApolloErrorHandler } from '../graphql/useApolloErrorHandler';
 import { useNotification } from '../useNotification';
+import evictFromCache from '../../utils/evictFromCache';
 
 type Options = {
   onComplete?: (data: DeleteGroupMutation) => void;
@@ -24,14 +25,7 @@ export const useDeleteUserGroup = (options?: Options) => {
     },
     onError: (options && options.onError && options.onError) || handleError,
 
-    update: (cache, { data }) => {
-      if (data) {
-        const { id, __typename } = data.deleteUserGroup;
-        const normalizedId = cache.identify({ id: id, __typename: __typename });
-        cache.evict({ id: normalizedId });
-        cache.gc();
-      }
-    },
+    update: evictFromCache,
   });
 
   const handleDelete = (id: string) => {
