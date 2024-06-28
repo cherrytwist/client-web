@@ -74,15 +74,28 @@ const NewMembershipsBlock = ({ hiddenIfEmpty = false, onOpenMemberships }: NewMe
 
   const { data, refetch: refetchNewMembershipsQuery } = useNewMembershipsQuery();
 
+  const mapInvitationResultToInivitationItem = invitationResult => {
+    const result: InvitationItem & { type: PendingMembershipItemType } = {
+      id: invitationResult.id,
+      space: { ...invitationResult.space },
+      invitation: { ...invitationResult.invitation },
+      type: PendingMembershipItemType.Invitation,
+    };
+    return result;
+  };
+
+  const mapApplicationResultToApplicationItem = applicationResult => {
+    const result: PendingApplication & { type: PendingMembershipItemType } = {
+      id: applicationResult.id,
+      space: { ...applicationResult.space },
+      application: { ...applicationResult.application },
+      type: PendingMembershipItemType.Application,
+    };
+    return result;
+  };
+
   const communityInvitations = useMemo(
-    () =>
-      data?.me.communityInvitations.map(
-        invitation =>
-          ({
-            type: PendingMembershipItemType.Invitation,
-            ...(invitation as InvitationItem),
-          } as const)
-      ) ?? [],
+    () => data?.me.communityInvitations.map(mapInvitationResultToInivitationItem) ?? [],
     [data?.me.communityInvitations]
   );
 
@@ -98,14 +111,7 @@ const NewMembershipsBlock = ({ hiddenIfEmpty = false, onOpenMemberships }: NewMe
   );
 
   const communityApplications = useMemo(
-    () =>
-      data?.me.communityApplications.map(
-        application =>
-          ({
-            type: PendingMembershipItemType.Application,
-            ...(application as PendingApplication),
-          } as const)
-      ) ?? [],
+    () => data?.me.communityApplications.map(mapApplicationResultToApplicationItem) ?? [],
     [data?.me.communityApplications]
   );
 
