@@ -1,9 +1,7 @@
-import { Box, CardContent, Skeleton } from '@mui/material';
-import createStyles from '@mui/styles/createStyles';
-import makeStyles from '@mui/styles/makeStyles';
-import { PropsWithChildren } from 'react';
 import LinkCard from '@/core/ui/card/LinkCard';
 import WrapperTypography from '@/core/ui/typography/deprecated/WrapperTypography';
+import { Box, CardContent, Skeleton } from '@mui/material';
+import { PropsWithChildren } from 'react';
 
 export interface CredentialCardEntities {
   name: string;
@@ -26,26 +24,6 @@ export interface CredentialCardProps {
   };
   loading?: boolean;
 }
-
-const useStyles = makeStyles(theme =>
-  createStyles({
-    card: {
-      height: '100%',
-      width: '100%',
-      minWidth: 254, // magic
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    cardContent: {
-      padding: theme.spacing(1.5),
-      flexGrow: 1,
-      background: theme.palette.background.default,
-    },
-    entityType: {
-      color: '#FFFFFF',
-    },
-  })
-);
 
 const issuerResolver = (issuer: string | undefined) => {
   if (!issuer) return 'Undefined';
@@ -89,11 +67,19 @@ const CredentialCard = ({ entities: details, loading = false, children }: PropsW
     issueDate ? ` on ${issueDate.toLocaleDateString()}` : ''
   }`;
 
-  const styles = useStyles();
-
   return (
-    <LinkCard to={url} className={styles.card} aria-label="credential-card">
-      <CardContent className={styles.cardContent}>
+    <LinkCard
+      to={url}
+      sx={{
+        height: 1,
+        width: 1,
+        minWidth: 254, // magic
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+      aria-label="credential-card"
+    >
+      <CardContent sx={{ p: 1.5, flexGrow: 1, bgcolor: 'background.default' }}>
         {loading ? (
           <Box>
             <Skeleton variant="rectangular" animation="wave" />

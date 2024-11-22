@@ -1,8 +1,7 @@
-import { Palette, TypographyVariant } from '@mui/material/styles';
+import { replaceAll } from '@/core/utils/replaceAll';
 import makeStyles from '@mui/styles/makeStyles';
 import clsx from 'clsx';
-import React, { FC, useMemo, useRef } from 'react';
-import { replaceAll } from '@/core/utils/replaceAll';
+import React, { FC, PropsWithChildren, useMemo, useRef } from 'react';
 
 const useTypographyStyles = makeStyles(theme => ({
   h1: {
@@ -92,7 +91,7 @@ export const fontWeight: FontWeight = {
   bold: 900,
 };
 
-interface TypographyProps {
+interface TypographyProps extends PropsWithChildren {
   variant?: TypographyVariant;
   className?: string;
   color?: keyof Palette | 'inherit';
