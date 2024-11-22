@@ -1,10 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import React from 'react';
-import Tag from './Tag';
 import { render } from '@/main/test/testUtils';
-import { test, describe } from 'vitest';
+import { describe, test } from 'vitest';
+import Tag from './Tag';
 
 describe('Tag component', () => {
   test.skip('check Tag with message', async () => {

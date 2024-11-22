@@ -1,33 +1,33 @@
-import { Form, Formik } from 'formik';
-import React, { FC, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import useNavigate from '@/core/routing/useNavigate';
-import * as yup from 'yup';
-import { Grid } from '@mui/material';
-import { Tagset, UpdateTagset } from '@/domain/common/profile/Profile';
 import {
+  CreateOrganizationInput,
   Organization,
   OrganizationVerificationEnum,
-  UpdateOrganizationInput,
-  CreateOrganizationInput,
   TagsetType,
+  UpdateOrganizationInput,
 } from '@/core/apollo/generated/graphql-schema';
-import { EditMode } from '@/core/ui/forms/editMode';
+import useNavigate from '@/core/routing/useNavigate';
 import WrapperButton from '@/core/ui/button/deprecated/WrapperButton';
 import Section, { Header } from '@/core/ui/content/deprecated/Section';
+import { EditMode } from '@/core/ui/forms/editMode';
+import Gutters from '@/core/ui/grid/Gutters';
 import VisualUpload from '@/core/ui/upload/VisualUpload/VisualUpload';
+import { EmptyLocation } from '@/domain/common/location/Location';
+import { LocationSegment } from '@/domain/common/location/LocationSegment';
+import { formatLocation } from '@/domain/common/location/LocationUtils';
+import { Tagset, UpdateTagset } from '@/domain/common/profile/Profile';
+import { OrganizationInput } from '@/domain/community/contributor/organization/OrganizationInput';
+import { OrgVerificationLifecycleEvents } from '@/domain/community/contributor/organization/adminOrganizations/useAdminGlobalOrganizationsList';
+import { Grid } from '@mui/material';
+import { Form, Formik } from 'formik';
+import { FC, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import * as yup from 'yup';
+import { NameSegment, nameSegmentSchema } from '../Common/NameSegment';
+import { OrganizationSegment, organizationSegmentSchema } from '../Common/OrganizationSegment';
 import ProfileReferenceSegment from '../Common/ProfileReferenceSegment';
+import { ProfileSegment, profileSegmentSchema } from '../Common/ProfileSegment';
 import { referenceSegmentSchema } from '../Common/ReferenceSegment';
 import { TagsetSegment, tagsetsSegmentSchema } from '../Common/TagsetSegment';
-import { ProfileSegment, profileSegmentSchema } from '../Common/ProfileSegment';
-import { organizationSegmentSchema, OrganizationSegment } from '../Common/OrganizationSegment';
-import { NameSegment, nameSegmentSchema } from '../Common/NameSegment';
-import { OrganizationInput } from '@/domain/community/contributor/organization/OrganizationInput';
-import { formatLocation } from '@/domain/common/location/LocationUtils';
-import { LocationSegment } from '@/domain/common/location/LocationSegment';
-import { EmptyLocation } from '@/domain/common/location/Location';
-import Gutters from '@/core/ui/grid/Gutters';
-import { OrgVerificationLifecycleEvents } from '@/domain/community/contributor/organization/adminOrganizations/useAdminGlobalOrganizationsList';
 
 const EmptyOrganization: Omit<Organization, 'authorization' | 'agent'> = {
   id: '',

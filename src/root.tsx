@@ -1,31 +1,30 @@
-import { StyledEngineProvider } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
-import { FC } from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import AlkemioApolloProvider from '@/core/apollo/context/ApolloProvider';
-import { GlobalStateProvider } from '@/core/state/GlobalStateProvider';
 import SentryErrorBoundaryProvider from '@/core/analytics/SentryErrorBoundaryProvider';
-import ServerMetadataProvider from '@/domain/platform/metadata/ServerMetadataProvider';
-import RootThemeProvider from '@/core/ui/themes/RootThemeProvider';
-import { UserProvider } from '@/domain/community/user/providers/UserProvider/UserProvider';
-import '@/core/i18n/config';
-import { TopLevelRoutes } from '@/main/routing/TopLevelRoutes';
-import ScrollToTop from '@/core/routing/ScrollToTop';
-import { CookiesProvider } from 'react-cookie';
-import { privateGraphQLEndpoint, publicGraphQLEndpoint } from '@/main/constants/endpoints';
-import { AuthenticationProvider } from '@/core/auth/authentication/context/AuthenticationProvider';
-import { ConfigProvider } from '@/domain/platform/config/ConfigProvider';
-import { fontFamilySourceSans, subHeading } from '@/core/ui/typography/themeTypographyOptions';
+import { SentryTransactionScopeContextProvider } from '@/core/analytics/SentryTransactionScopeContext';
 import { ApmProvider, ApmUserSetter } from '@/core/analytics/apm/context';
 import { UserGeoProvider } from '@/core/analytics/geo';
-import { SentryTransactionScopeContextProvider } from '@/core/analytics/SentryTransactionScopeContext';
-import { useInitialChatWidgetMessage } from '@/main/guidance/chatWidget/ChatWidget';
-import { PendingMembershipsDialogProvider } from '@/domain/community/pendingMembership/PendingMembershipsDialogContext';
+import AlkemioApolloProvider from '@/core/apollo/context/ApolloProvider';
+import { AuthenticationProvider } from '@/core/auth/authentication/context/AuthenticationProvider';
+import '@/core/i18n/config';
 import { NotFoundErrorBoundary } from '@/core/notFound/NotFoundErrorBoundary';
 import { Error404 } from '@/core/pages/Errors/Error404';
+import ScrollToTop from '@/core/routing/ScrollToTop';
+import { GlobalStateProvider } from '@/core/state/GlobalStateProvider';
+import RootThemeProvider from '@/core/ui/themes/RootThemeProvider';
+import { fontFamilySourceSans, subHeading } from '@/core/ui/typography/themeTypographyOptions';
+import { PendingMembershipsDialogProvider } from '@/domain/community/pendingMembership/PendingMembershipsDialogContext';
+import { UserProvider } from '@/domain/community/user/providers/UserProvider/UserProvider';
+import { ConfigProvider } from '@/domain/platform/config/ConfigProvider';
+import ServerMetadataProvider from '@/domain/platform/metadata/ServerMetadataProvider';
+import { privateGraphQLEndpoint, publicGraphQLEndpoint } from '@/main/constants/endpoints';
+import { useInitialChatWidgetMessage } from '@/main/guidance/chatWidget/ChatWidget';
+import { TopLevelRoutes } from '@/main/routing/TopLevelRoutes';
 import TopLevelLayout from '@/main/ui/layout/TopLevelLayout';
+import { StyledEngineProvider, styled } from '@mui/material/styles';
+import { FC } from 'react';
+import { CookiesProvider } from 'react-cookie';
+import { BrowserRouter } from 'react-router-dom';
 
-const useGlobalStyles = makeStyles(theme => ({
+const GlobalStyledDiv = styled('div')(({ theme }) => ({
   '@global': {
     '*': {
       scrollbarColor: `${theme.palette.primary.main} transparent`,
@@ -59,18 +58,13 @@ const useGlobalStyles = makeStyles(theme => ({
   },
 }));
 
-const GlobalStyles: FC = ({ children }) => {
-  useGlobalStyles();
-  return <>{children}</>;
-};
-
 const Root: FC = () => {
   useInitialChatWidgetMessage();
 
   return (
     <StyledEngineProvider injectFirst>
       <RootThemeProvider>
-        <GlobalStyles>
+        <GlobalStyledDiv>
           <CookiesProvider>
             <ConfigProvider url={publicGraphQLEndpoint}>
               <ServerMetadataProvider url={publicGraphQLEndpoint}>
@@ -108,7 +102,7 @@ const Root: FC = () => {
               </ServerMetadataProvider>
             </ConfigProvider>
           </CookiesProvider>
-        </GlobalStyles>
+        </GlobalStyledDiv>
       </RootThemeProvider>
     </StyledEngineProvider>
   );

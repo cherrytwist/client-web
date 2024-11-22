@@ -1,28 +1,34 @@
-import { cloneElement, ReactElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Box, IconButton, IconButtonProps, Paper, SvgIconProps, Theme, Tooltip } from '@mui/material';
-import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
-import { addResponseMessage, dropMessages, renderCustomComponent, toggleWidget, Widget } from 'react-chat-widget';
 import {
   useAskChatGuidanceQuestionQuery,
   useResetChatGuidanceMutation,
   useUpdateAnswerRelevanceMutation,
 } from '@/core/apollo/generated/apollo-hooks';
-import logoSrc from '@/main/ui/logo/logoSmall.svg';
-import { useTranslation } from 'react-i18next';
-import 'react-chat-widget/lib/styles.css';
-import formatChatGuidanceResponseAsMarkdown from './formatChatGuidanceResponseAsMarkdown';
-import ChatWidgetStyles from './ChatWidgetStyles';
-import ChatWidgetTitle from './ChatWidgetTitle';
-import ChatWidgetHelpDialog from './ChatWidgetHelpDialog';
-import { createPortal } from 'react-dom';
-import ChatWidgetFooter from './ChatWidgetFooter';
 import Gutters from '@/core/ui/grid/Gutters';
 import { gutters } from '@/core/ui/grid/utils';
 import { Caption } from '@/core/ui/typography';
-import { InfoOutlined } from '@mui/icons-material';
+import logoSrc from '@/main/ui/logo/logoSmall.svg';
 import { PLATFORM_NAVIGATION_MENU_Z_INDEX } from '@/main/ui/platformNavigation/constants';
+import { InfoOutlined } from '@mui/icons-material';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import { Box, IconButton, IconButtonProps, Paper, SvgIconProps, Theme, Tooltip } from '@mui/material';
+import { cloneElement, ReactElement, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  addResponseMessage,
+  dropMessages,
+  renderCustomComponent,
+  toggleWidget,
+  Widget,
+} from 'react-chat-widget-react-18';
+import 'react-chat-widget/lib/styles.css';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import ChatWidgetFooter from './ChatWidgetFooter';
+import ChatWidgetHelpDialog from './ChatWidgetHelpDialog';
 import ChatWidgetMenu from './ChatWidgetMenu';
+import ChatWidgetStyles from './ChatWidgetStyles';
+import ChatWidgetTitle from './ChatWidgetTitle';
+import formatChatGuidanceResponseAsMarkdown from './formatChatGuidanceResponseAsMarkdown';
 
 type FeedbackType = 'positive' | 'negative';
 
