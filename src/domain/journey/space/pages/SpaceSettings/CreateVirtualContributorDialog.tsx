@@ -13,6 +13,8 @@ import FormikSelect from '@/core/ui/forms/FormikSelect';
 import useLoadingState from '@/domain/shared/utils/useLoadingState';
 import { Caption } from '@/core/ui/typography';
 import { nameSegmentSchema } from '@/domain/platform/admin/components/Common/NameSegment';
+import { StorageConfigContextProvider } from '@/domain/storage/StorageBucket/StorageConfigContext';
+import { useUserContext } from '@/domain/community/user';
 
 export interface VirtualContributorFormValues {
   displayName: string;
@@ -35,6 +37,8 @@ const CreateVirtualContributorDialog: FC<CreateVirtualContributorDialogProps> = 
   submitting,
 }) => {
   const { t } = useTranslation();
+  const { user } = useUserContext();
+  const userId = user?.user.id;
 
   const initialValues = {
     displayName: '',
@@ -53,36 +57,42 @@ const CreateVirtualContributorDialog: FC<CreateVirtualContributorDialogProps> = 
     });
   });
 
+  if (!userId) {
+    return null;
+  }
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogHeader onClose={onClose} title={t('virtualContributorSpaceSettings.create.title')} />
       <DialogContent>
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleCreate}>
-          <Form noValidate>
-            <Gutters>
-              <FormikInputField title={t('virtualContributorSpaceSettings.name')} name="displayName" required />
-              <FormikSelect
-                title={t('virtualContributorSpaceSettings.bodyOfKnowledge')}
-                name="bodyOfKnowledgeID"
-                values={spaces ?? []}
-                required
-              />
-              <Caption>{t('virtualContributorSpaceSettings.infoTextBoK')}</Caption>
-              <Actions justifyContent="flex-end" paddingTop={gutters()}>
-                <Button onClick={onClose}>{t('buttons.cancel')}</Button>
-                <LoadingButton
-                  variant="contained"
-                  disabled={loading}
-                  loading={submitting}
-                  loadingIndicator="..."
-                  type="submit"
-                >
-                  {t('buttons.create')}
-                </LoadingButton>
-              </Actions>
-            </Gutters>
-          </Form>
-        </Formik>
+        <StorageConfigContextProvider locationType="user" userId={userId}>
+          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleCreate}>
+            <Form noValidate>
+              <Gutters>
+                <FormikInputField title={t('virtualContributorSpaceSettings.name')} name="displayName" required />
+                <FormikSelect
+                  title={t('virtualContributorSpaceSettings.bodyOfKnowledge')}
+                  name="bodyOfKnowledgeID"
+                  values={spaces ?? []}
+                  required
+                />
+                <Caption>{t('virtualContributorSpaceSettings.infoTextBoK')}</Caption>
+                <Actions justifyContent="flex-end" paddingTop={gutters()}>
+                  <Button onClick={onClose}>{t('buttons.cancel')}</Button>
+                  <LoadingButton
+                    variant="contained"
+                    disabled={loading}
+                    loading={submitting}
+                    loadingIndicator="..."
+                    type="submit"
+                  >
+                    {t('buttons.create')}
+                  </LoadingButton>
+                </Actions>
+              </Gutters>
+            </Form>
+          </Formik>
+        </StorageConfigContextProvider>
       </DialogContent>
     </Dialog>
   );
