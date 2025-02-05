@@ -53,6 +53,7 @@ const DashboardNavigation = ({
   const { t } = useTranslation();
 
   const [isSnapped, setIsSnapped] = useState(true);
+  console.log('@@@ isSnapped >>>', isSnapped);
 
   const [hasHeightLimit, setHasHeightLimit] = useState(true);
 
@@ -168,12 +169,15 @@ const DashboardNavigation = ({
   const onRefsUpdated = useRef(debounce(() => adjustViewportFnRef.current())).current;
 
   // Has to maintain stable id over renders, otherwise we get a loop because React always invokes a new functional ref
-  const itemRef = useCallback((element: DashboardNavigationItemViewApi | null) => {
-    if (element && itemRefs[element.id] !== element) {
-      itemRefs[element.id] = element;
-      onRefsUpdated();
-    }
-  }, []);
+  const itemRef = useCallback(
+    (element: DashboardNavigationItemViewApi | null) => {
+      if (element && itemRefs[element.id] !== element) {
+        itemRefs[element.id] = element;
+        onRefsUpdated();
+      }
+    },
+    [itemRefs, onRefsUpdated]
+  );
 
   const shouldShift = isSnapped && currentLevel !== -1 && !isTopLevel && !compact;
 
@@ -222,6 +226,7 @@ const DashboardNavigation = ({
         >
           {dashboardNavigationRoot && (
             <DashboardNavigationItemView
+              // @@@ WIP ~ #7309
               ref={itemRef}
               currentPath={pathToItem}
               tooltipPlacement={tooltipPlacement}
@@ -229,6 +234,7 @@ const DashboardNavigation = ({
               compact={compact}
               onCreateSubspace={onCreateSubspace}
               itemProps={itemProps}
+              isAddButtonVisible={isSnapped} // @@@ WIP ~ #7309 - Не е адекватно, защото `isSnapped`отговаря правилно, само за parent Space-а
               {...dashboardNavigationRoot}
               {...getItemProps(dashboardNavigationRoot)}
             />
@@ -238,7 +244,7 @@ const DashboardNavigation = ({
       {!isTopLevel && (
         <Actions padding={1} justifyContent="center">
           <Button
-            startIcon={compact ? undefined : isSnapped ? <UnfoldMore /> : <UnfoldLess />}
+            startIcon={compact ? undefined : isSnapped ? <UnfoldMore /> : <UnfoldLess />} // @@@ WIP ~ #7309
             onClick={() => setIsSnapped(isExpanded => !isExpanded)}
             sx={{ textTransform: 'none', minWidth: 0, padding: 0.8 }}
           >
