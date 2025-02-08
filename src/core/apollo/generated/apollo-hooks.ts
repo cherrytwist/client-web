@@ -11223,6 +11223,52 @@ export function refetchAllOrganizationsQuery(variables: SchemaTypes.AllOrganizat
   return { query: AllOrganizationsDocument, variables: variables };
 }
 
+export const CreateWingbackAccountDocument = gql`
+  mutation createWingbackAccount($accountID: UUID!) {
+    createWingbackAccount(accountID: $accountID)
+  }
+`;
+export type CreateWingbackAccountMutationFn = Apollo.MutationFunction<
+  SchemaTypes.CreateWingbackAccountMutation,
+  SchemaTypes.CreateWingbackAccountMutationVariables
+>;
+
+/**
+ * __useCreateWingbackAccountMutation__
+ *
+ * To run a mutation, you first call `useCreateWingbackAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWingbackAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWingbackAccountMutation, { data, loading, error }] = useCreateWingbackAccountMutation({
+ *   variables: {
+ *      accountID: // value for 'accountID'
+ *   },
+ * });
+ */
+export function useCreateWingbackAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SchemaTypes.CreateWingbackAccountMutation,
+    SchemaTypes.CreateWingbackAccountMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SchemaTypes.CreateWingbackAccountMutation,
+    SchemaTypes.CreateWingbackAccountMutationVariables
+  >(CreateWingbackAccountDocument, options);
+}
+
+export type CreateWingbackAccountMutationHookResult = ReturnType<typeof useCreateWingbackAccountMutation>;
+export type CreateWingbackAccountMutationResult = Apollo.MutationResult<SchemaTypes.CreateWingbackAccountMutation>;
+export type CreateWingbackAccountMutationOptions = Apollo.BaseMutationOptions<
+  SchemaTypes.CreateWingbackAccountMutation,
+  SchemaTypes.CreateWingbackAccountMutationVariables
+>;
 export const ContributorsPageOrganizationsDocument = gql`
   query ContributorsPageOrganizations(
     $first: Int!
@@ -13708,6 +13754,12 @@ export const VirtualContributorDocument = gql`
           avatar: visual(type: AVATAR) {
             ...VisualFull
           }
+          references {
+            id
+            name
+            uri
+            description
+          }
         }
       }
     }
@@ -13783,6 +13835,12 @@ export const VirtualContributorProfileDocument = gql`
           url
           avatar: visual(type: AVATAR) {
             ...VisualFull
+          }
+          references {
+            id
+            name
+            uri
+            description
           }
         }
       }
@@ -14007,6 +14065,12 @@ export const UpdateVirtualContributorSettingsDocument = gql`
         }
         displayName
         description
+        references {
+          id
+          name
+          uri
+          description
+        }
       }
     }
   }
@@ -16313,6 +16377,9 @@ export const FreePlanAvailabilityDocument = gql`
           authorization {
             id
             myPrivileges
+          }
+          license {
+            availableEntitlements
           }
         }
       }
@@ -22797,9 +22864,7 @@ export function refetchCampaignBlockCredentialsQuery(variables?: SchemaTypes.Cam
 export const PendingInvitationsCountDocument = gql`
   query PendingInvitationsCount {
     me {
-      communityInvitations(states: ["invited"]) {
-        id
-      }
+      communityInvitationsCount(states: ["invited"])
     }
   }
 `;
@@ -22856,9 +22921,9 @@ export function refetchPendingInvitationsCountQuery(variables?: SchemaTypes.Pend
 }
 
 export const DashboardWithMembershipsDocument = gql`
-  query DashboardWithMemberships {
+  query DashboardWithMemberships($limit: Float! = 0) {
     me {
-      spaceMembershipsHierarchical {
+      spaceMembershipsHierarchical(limit: $limit) {
         id
         space {
           ...DashboardSpaceMembership
@@ -22887,6 +22952,7 @@ export const DashboardWithMembershipsDocument = gql`
  * @example
  * const { data, loading, error } = useDashboardWithMembershipsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
  *   },
  * });
  */
@@ -23522,9 +23588,9 @@ export function refetchLatestContributionsSpacesFlatQuery(
 }
 
 export const MyMembershipsDocument = gql`
-  query MyMemberships {
+  query MyMemberships($limit: Float) {
     me {
-      spaceMembershipsHierarchical {
+      spaceMembershipsHierarchical(limit: $limit) {
         id
         space {
           ...SpaceMembership
@@ -23559,6 +23625,7 @@ export const MyMembershipsDocument = gql`
  * @example
  * const { data, loading, error } = useMyMembershipsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
  *   },
  * });
  */
