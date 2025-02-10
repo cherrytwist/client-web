@@ -43,17 +43,17 @@ const collectIds = (item: DashboardNavigationItem): string[] => {
 };
 
 const DashboardNavigation = ({
-  dashboardNavigation: dashboardNavigationRoot,
+  dashboardNavigation: dashboardNavigationRoot, // @@@ WIP ~ #7309 - Данните за Subspace-овете
   currentItemId,
   itemProps = () => ({}),
   onCreateSubspace,
   compact = false,
   onCurrentItemNotFound = () => {},
 }: DashboardNavigationProps) => {
+  console.log('dashboardNavigationRoot', dashboardNavigationRoot);
   const { t } = useTranslation();
 
   const [isSnapped, setIsSnapped] = useState(true);
-  console.log('@@@ isSnapped >>>', isSnapped);
 
   const [hasHeightLimit, setHasHeightLimit] = useState(true);
 
@@ -179,6 +179,16 @@ const DashboardNavigation = ({
     [itemRefs, onRefsUpdated]
   );
 
+  useEffect(() => {
+    // Keep `isSnapped` in localStorage to persist the state when navigating in the Subspace since every Boolean flag is referring to the parent Space
+    // and most likely because `DashboardNavigationItemView` is wrapped with `forwardRef` isn't updating adequately when this Boolean flag is changed.
+    localStorage.setItem('isSubspacesBlockSnapped', JSON.stringify(isSnapped));
+
+    return () => {
+      localStorage.removeItem('isSubspacesBlockSnapped');
+    };
+  }, [isSnapped]);
+
   const shouldShift = isSnapped && currentLevel !== -1 && !isTopLevel && !compact;
 
   const contentTranslationX = (theme: Theme) => (shouldShift ? gutters(-(currentLevel - 1) * 2)(theme) : 0);
@@ -188,8 +198,10 @@ const DashboardNavigation = ({
 
   const getItemProps = typeof itemProps === 'function' ? itemProps : () => itemProps;
 
+  // @@@ WIP ~ #7309 - Това е блока вляво, който изрежда в списък всички Space-ове и Subspace-ове.
   return (
     <PageContentBlock disablePadding disableGap>
+      {/* (*1) @@@ WIP ~ #7309 - Заглавието на SPACE-а в блока */}
       {!compact && (
         <Collapse in={!isSnapped || isTopLevel}>
           <RouterLink to={dashboardNavigationRoot?.url ?? ''}>
@@ -215,6 +227,9 @@ const DashboardNavigation = ({
           </RouterLink>
         </Collapse>
       )}
+      {/* (КРАЙ НА *1) */}
+
+      {/* (*2) @@@ WIP ~ #7309 - Това е списъка с всички Space-ове и Subspace-ове. */}
       <Box height={viewportSnap.height} overflow="hidden" sx={{ transition: 'height 0.3s ease-in-out' }}>
         <Box
           ref={contentWrapperRef}
@@ -234,13 +249,15 @@ const DashboardNavigation = ({
               compact={compact}
               onCreateSubspace={onCreateSubspace}
               itemProps={itemProps}
-              isAddButtonVisible={isSnapped} // @@@ WIP ~ #7309 - Не е адекватно, защото `isSnapped`отговаря правилно, само за parent Space-а
               {...dashboardNavigationRoot}
               {...getItemProps(dashboardNavigationRoot)}
             />
           )}
         </Box>
       </Box>
+      {/* (КРАЙ НА *2) */}
+
+      {/* (*3) @@@ WIP ~ #7309 - Това е "Show full hierarchy" бутона, когато сме в Subspace. */}
       {!isTopLevel && (
         <Actions padding={1} justifyContent="center">
           <Button
@@ -253,6 +270,9 @@ const DashboardNavigation = ({
           </Button>
         </Actions>
       )}
+      {/* (КРАЙ НА *3) */}
+
+      {/* (*4) @@@ WIP ~ #7309 - Това е "Show all" бутона, когато сме в Space. */}
       {isTopLevel &&
         (showAll ? (
           <Box height={gutters(0.5)} />
@@ -268,6 +288,7 @@ const DashboardNavigation = ({
             </Button>
           </Actions>
         ))}
+      {/* (КРАЙ НА *4) */}
     </PageContentBlock>
   );
 };

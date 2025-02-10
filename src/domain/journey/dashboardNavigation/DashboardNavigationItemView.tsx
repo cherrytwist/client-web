@@ -18,7 +18,6 @@ export interface DashboardNavigationItemViewProps extends DashboardNavigationIte
   subspaceOfCurrent?: boolean;
   level?: number;
   onClick?: MouseEventHandler;
-  isAddButtonVisible?: boolean;
   onToggle?: (isExpanded: boolean) => void;
   compact?: boolean;
   onCreateSubspace?: (parent: Identifiable) => void;
@@ -53,15 +52,11 @@ const DashboardNavigationItemView = forwardRef<DashboardNavigationItemViewApi, D
       compact = false,
       canCreateSubspace = false,
       onCreateSubspace,
-      isAddButtonVisible,
       itemProps = () => ({}),
     },
     ref
   ) => {
-    console.log(`displayName: ${displayName} / isAddButtonVisible: ${isAddButtonVisible}`);
-
     const [isExpanded, setIsExpanded] = useState(true); // @@@ WIP ~ #7309 - Това отговаря, само когато сме в SPACE и там има експандър, който показва SUBSPACES под него
-    // console.log('@@@ isExpanded >>>', isExpanded);
 
     const { t } = useTranslation();
 
@@ -132,12 +127,14 @@ const DashboardNavigationItemView = forwardRef<DashboardNavigationItemViewApi, D
 
     const getItemProps = typeof itemProps === 'function' ? itemProps : () => itemProps;
 
+    const isSubspacesBlockSnapped = localStorage.getItem('isSubspacesBlockSnapped');
+
     if (compact && !(includesCurrentItem || subspaceOfCurrent)) {
       return null;
     }
 
     return (
-      <div style={{ backgroundColor: 'red' }}>
+      <>
         <BadgeCardView
           ref={hostContainerRef}
           component={RouterLink}
@@ -197,7 +194,9 @@ const DashboardNavigationItemView = forwardRef<DashboardNavigationItemViewApi, D
           >
             <Box ref={childrenContainerRef}>
               {/* @@@ WIP ~ #7309 (DashboardAddButton) */}
-              {hasCreateButton && <DashboardAddButton level={level + 1} onClick={() => onCreateSubspace?.({ id })} />}
+              {isSubspacesBlockSnapped === 'true' && hasCreateButton && (
+                <DashboardAddButton level={level + 1} onClick={() => onCreateSubspace?.({ id })} />
+              )}
 
               {children?.map(child => (
                 <DashboardNavigationItemView
@@ -218,7 +217,7 @@ const DashboardNavigationItemView = forwardRef<DashboardNavigationItemViewApi, D
             </Box>
           </Collapse>
         )}
-      </div>
+      </>
     );
   }
 );
