@@ -11,7 +11,8 @@ import DashboardNavigationItemView, {
   DashboardNavigationItemViewApi,
   DashboardNavigationItemViewProps,
 } from './DashboardNavigationItemView';
-import { DashboardNavigationItem } from '../space/spaceDashboardNavigation/useSpaceDashboardNavigation';
+// import { DashboardNavigationListItem } from './DashboardNavigationListItem';
+import { type DashboardNavigationItem } from '../space/spaceDashboardNavigation/useSpaceDashboardNavigation';
 import { Actions } from '@/core/ui/actions/Actions';
 
 import produce from 'immer';
@@ -42,15 +43,23 @@ const collectIds = (item: DashboardNavigationItem): string[] => {
   return [item.id, ...children.flatMap(collectIds)];
 };
 
+/**
+ *
+ * Получавам данните за:
+ *  0. Оправи JSX-а тук, защото не визуализира нищо.
+ *  1. Space-а родителя, на който визуализирам само `displayName` и `url`
+ *  2. Subspace-овете на Space-а родител, които се визуализират в списък, като всеки се разгъва надолу и показва своите Subspace-ове (вдясно слагаме бутон със стрелка)
+ *    2.1. Всеки Subspace съдържа `displayName`, `url`, `avatar` и `children`, като `children` е списък от Subspace-ове от ниво 2 и се визуализират вложено по същия начин
+ */
+
 const DashboardNavigation = ({
-  dashboardNavigation: dashboardNavigationRoot, // @@@ WIP ~ #7309 - Данните за Subspace-овете
-  currentItemId,
-  itemProps = () => ({}),
+  dashboardNavigation: dashboardNavigationRoot, // @@@ WIP ~ #7309 - Данните за Subspace-овете, като `children` са данните за Subspace-овете
+  currentItemId, // @@@ WIP ~ #7309 - ID-то на Space-а или Subspace-а, в който сме влезли
+  itemProps = () => ({}), // @@@ WIP ~ #7309 - Празно
   onCreateSubspace,
   compact = false,
   onCurrentItemNotFound = () => {},
 }: DashboardNavigationProps) => {
-  console.log('dashboardNavigationRoot', dashboardNavigationRoot);
   const { t } = useTranslation();
 
   const [isSnapped, setIsSnapped] = useState(true);
@@ -200,7 +209,7 @@ const DashboardNavigation = ({
 
   // @@@ WIP ~ #7309 - Това е блока вляво, който изрежда в списък всички Space-ове и Subspace-ове.
   return (
-    <PageContentBlock disablePadding disableGap>
+    <PageContentBlock disablePadding disableGap sx={{ border: '5px dashed' }}>
       {/* (*1) @@@ WIP ~ #7309 - Заглавието на SPACE-а в блока */}
       {!compact && (
         <Collapse in={!isSnapped || isTopLevel}>
@@ -240,6 +249,17 @@ const DashboardNavigation = ({
           }}
         >
           {dashboardNavigationRoot && (
+            // <DashboardNavigationListItem
+            //   compact={compact}
+            //   itemProps={itemProps}
+            //   currentPath={pathToItem}
+            //   tooltipPlacement={tooltipPlacement}
+            //   onToggle={adjustViewport}
+            //   onCreateSubspace={onCreateSubspace}
+            //   {...dashboardNavigationRoot}
+            //   {...getItemProps(dashboardNavigationRoot)}
+            // />
+
             <DashboardNavigationItemView
               // @@@ WIP ~ #7309
               ref={itemRef}
