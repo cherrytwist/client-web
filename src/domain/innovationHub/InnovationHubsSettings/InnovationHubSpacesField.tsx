@@ -21,7 +21,7 @@ import { BlockSectionTitle, BlockTitle } from '@/core/ui/typography';
 import { Remove, Search } from '@mui/icons-material';
 import DialogWithGrid from '@/core/ui/dialog/DialogWithGrid';
 import Gutters from '@/core/ui/grid/Gutters';
-import { SpaceVisibility } from '@/core/apollo/generated/graphql-schema';
+import { SpaceAboutLightFragment, SpaceVisibility } from '@/core/apollo/generated/graphql-schema';
 
 export interface Space extends Identifiable {
   id: string;
@@ -31,9 +31,7 @@ export interface Space extends Identifiable {
     };
   };
   visibility: SpaceVisibility;
-  profile: {
-    displayName: string;
-  };
+  about: SpaceAboutLightFragment;
 }
 
 interface InnovationHubSpacesFieldProps {
@@ -71,8 +69,8 @@ const InnovationHubSpacesField = ({ spaces, onChange }: InnovationHubSpacesField
       field: 'profile.displayName',
       headerName: t('common.name'),
       renderHeader: () => <>{t('common.name')}</>,
-      renderCell: ({ row }: GridRenderCellParams<string, Space>) => <>{row.profile.displayName}</>,
-      valueGetter: ({ row }: GridValueGetterParams<string, Space>) => row.profile.displayName,
+      renderCell: ({ row }: GridRenderCellParams<string, Space>) => <>{row.about.profile.displayName}</>,
+      valueGetter: ({ row }: GridValueGetterParams<string, Space>) => row.about.profile.displayName,
       filterable: false,
       resizable: true,
     },
@@ -110,11 +108,11 @@ const InnovationHubSpacesField = ({ spaces, onChange }: InnovationHubSpacesField
   const [filter, setFilter] = useState('');
 
   const filteredAvailableSpaces = availableSpacesData?.spaces?.filter(space => {
-    return space.profile.displayName.toLowerCase().includes(filter.toLowerCase());
+    return space.about.profile.displayName.toLowerCase().includes(filter.toLowerCase());
   });
 
   const sortedAvailableSpaces = sortBy(filteredAvailableSpaces, space =>
-    space.profile.displayName.toLowerCase().indexOf(filter.toLowerCase())
+    space.about.profile.displayName.toLowerCase().indexOf(filter.toLowerCase())
   );
 
   return (
@@ -195,7 +193,7 @@ const InnovationHubSpacesField = ({ spaces, onChange }: InnovationHubSpacesField
                           {...provided.dragHandleProps}
                           sx={{ display: snapshot.isDragging ? 'table' : undefined }}
                         >
-                          <TableCell>{space.profile.displayName}</TableCell>
+                          <TableCell>{space.about.profile.displayName}</TableCell>
                           <TableCell>{space.visibility}</TableCell>
                           <TableCell>{space.provider.profile.displayName}</TableCell>
                           <TableCell>

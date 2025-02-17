@@ -4,7 +4,12 @@ import PageContentBlockHeader from '@/core/ui/content/PageContentBlockHeader';
 import PageContentBlockGrid from '@/core/ui/content/PageContentBlockGrid';
 import ScrollableCardsLayoutContainer from '@/core/ui/card/cardsLayout/ScrollableCardsLayoutContainer';
 import JourneyTile from '@/domain/journey/common/JourneyTile/JourneyTile';
-import { SpaceLevel, SpaceVisibility } from '@/core/apollo/generated/graphql-schema';
+import {
+  SpaceAboutCardBannerFragment,
+  SpaceAboutLightFragment,
+  SpaceLevel,
+  SpaceVisibility,
+} from '@/core/apollo/generated/graphql-schema';
 import { BlockTitle } from '@/core/ui/typography';
 import Gutters from '@/core/ui/grid/Gutters';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +38,7 @@ export interface AccountResourcesProps {
   id: string;
   spaces: {
     id: string;
-    profile: AccountProfile;
+    about: SpaceAboutCardBannerFragment;
   }[];
   virtualContributors: {
     id: string;
@@ -60,9 +65,7 @@ export interface AccountResourcesProps {
     spaceVisibilityFilter?: SpaceVisibility;
     spaceListFilter?: {
       id: string;
-      profile: {
-        displayName: string;
-      };
+      about: SpaceAboutLightFragment;
     }[];
     subdomain: string;
   }[];
@@ -97,11 +100,7 @@ export const AccountResourcesView = ({ accountResources, title }: AccountResourc
               <JourneyTile
                 key={contributionItem.id}
                 journey={{
-                  profile: {
-                    displayName: contributionItem.profile.displayName,
-                    url: contributionItem.profile.url,
-                    cardBanner: contributionItem.profile.cardBanner,
-                  },
+                  about: contributionItem.about,
                   level: SpaceLevel.L0,
                 }}
               />

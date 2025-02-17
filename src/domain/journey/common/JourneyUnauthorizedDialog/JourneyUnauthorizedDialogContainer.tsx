@@ -5,20 +5,18 @@ import {
   useSendMessageToCommunityLeadsMutation,
 } from '@/core/apollo/generated/apollo-hooks';
 import { EntityDashboardLeads } from '@/domain/community/community/EntityDashboardContributorsSection/Types';
-import { AuthorizationPrivilege, MetricsItemFragment, Reference } from '@/core/apollo/generated/graphql-schema';
+import {
+  AuthorizationPrivilege,
+  MetricsItemFragment,
+  SpaceAboutDetailsFragment,
+} from '@/core/apollo/generated/graphql-schema';
 import mainQuery from '@/core/apollo/utils/mainQuery';
 
 interface JourneyUnauthorizedDialogContainerProvided extends EntityDashboardLeads {
-  displayName: string | undefined;
-  tagline: string | undefined;
-  references: Reference[] | undefined;
+  about?: SpaceAboutDetailsFragment;
   sendMessageToCommunityLeads: (message: string) => Promise<void>;
   metrics: MetricsItemFragment[] | undefined;
   authorized: boolean | undefined;
-  vision: string | undefined;
-  background: string | undefined;
-  who: string | undefined;
-  impact: string | undefined;
   loading: boolean;
   error: Error | undefined;
 }
@@ -66,7 +64,9 @@ const JourneyUnauthorizedDialogContainer = ({
       !journeyId || !isUnauthorized || journeyCommunityPrivilegesLoading || Boolean(journeyCommunityPrivilegesError),
   });
 
-  const { profile, context, metrics, community } = journeyDataQueryData?.lookup.space ?? {};
+  const { metrics, community } = journeyDataQueryData?.lookup.space ?? {};
+
+  const about: SpaceAboutDetailsFragment = journeyDataQueryData?.lookup.space?.about!;
 
   const [sendMessageToCommunityLeads] = useSendMessageToCommunityLeadsMutation();
   const handleSendMessageToCommunityLeads = useCallback(
@@ -85,13 +85,7 @@ const JourneyUnauthorizedDialogContainer = ({
 
   const provided: JourneyUnauthorizedDialogContainerProvided = {
     authorized: !isUnauthorized,
-    background: profile?.description,
-    displayName: profile?.displayName,
-    tagline: profile?.tagline,
-    references: profile?.references,
-    vision: context?.vision,
-    who: context?.who,
-    impact: context?.impact,
+    about,
     metrics,
     sendMessageToCommunityLeads: handleSendMessageToCommunityLeads,
     provider: journeyDataQueryData?.lookup.space?.provider,
