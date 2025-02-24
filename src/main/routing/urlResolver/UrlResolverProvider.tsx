@@ -3,8 +3,9 @@ import { SpaceLevel, UrlType } from '@/core/apollo/generated/graphql-schema';
 import { isUrlResolverError } from '@/core/apollo/hooks/useApolloErrorHandler';
 import { NotFoundError } from '@/core/notFound/NotFoundErrorBoundary';
 import { PartialRecord } from '@/core/utils/PartialRecords';
-import { compact } from 'lodash';
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
+import { compact, debounce, isEqual } from 'lodash';
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import UrlParams from '../urlParams';
 
 export type JourneyPath = [] | [string] | [string, string] | [string, string, string];
 
@@ -54,7 +55,7 @@ export type UrlResolverContextValue = {
   // Innovation Hubs
   innovationHubId: string | undefined;
 
-  setUrlParams: (url: string) => void;
+  setUrlParams: (url: string, urlParams: UrlParams) => void;
   loading: boolean;
 };
 
@@ -100,7 +101,7 @@ const emptyResult: UrlResolverContextValue = {
  * @param generate A function that should generate the result based on the object selected by urlType
  * @returns
  */
-const selectUrlParams = <T extends {}, R extends {}>(
+const selectResolvedValues = <T extends {}, R extends {}>(
   urlType: UrlType,
   values: PartialRecord<UrlType, Partial<T | undefined>>,
   generate: (values: Partial<T> | undefined) => R
@@ -111,6 +112,8 @@ const UrlResolverContext = createContext<UrlResolverContextValue>(emptyResult);
 const UrlResolverProvider = ({ children }: { children: ReactNode }) => {
   // Using a state to force a re-render of the children when the url changes
   const [queryUrl, setQueryUrl] = useState<string>();
+  const previousUrlParams = useRef<UrlParams>({});
+  const hasBeenCalledRef = useRef(false);
 
   /**
    * Default Apollo's cache behavior will store the result of the URL resolver queries based on the Id of the space returned
@@ -142,9 +145,36 @@ const UrlResolverProvider = ({ children }: { children: ReactNode }) => {
     throw new NotFoundError();
   }
 
-  const setUrlParams = (url: string) => {
-    setQueryUrl(url);
-  };
+  const setUrlParams = useCallback(
+    (url: string, urlParams: UrlParams) => {
+      if (!hasBeenCalledRef.current) {
+        hasBeenCalledRef.current = true;
+        if (isEqual(urlParams, previousUrlParams.current)) {
+          // If url params didn't change, just ignore this url change
+          console.log('>>> IGNORING URL CHANGE', document.location.href, {
+            new: urlParams,
+            previous: previousUrlParams.current,
+          });
+        } else {
+          console.log('>>> URL CHANGED', document.location.href, {
+            new: urlParams,
+            previous: previousUrlParams.current,
+          });
+          previousUrlParams.current = { ...urlParams };
+          setQueryUrl(url);
+        }
+        resetHasBeenCalledRef();
+      } else {
+        console.log('>>>> ignoring subsequent calls to setUrlParams in this same render');
+      }
+    },
+    [previousUrlParams, setQueryUrl]
+  );
+
+  const resetHasBeenCalledRef = debounce(() => {
+    hasBeenCalledRef.current = false;
+    console.log('>>> resetHasBeenCalledRef');
+  });
 
   const emptyWithSetParams = { ...emptyResult, setUrlParams }; // add the setUrlParams function for the initial state
   // Store the result of the URL resolver query in a state to avoid screen shaking
@@ -171,7 +201,7 @@ const UrlResolverProvider = ({ children }: { children: ReactNode }) => {
         collaborationId: data.space?.collaboration.id,
 
         // CalloutsSet:
-        ...selectUrlParams(
+        ...selectResolvedValues(
           type,
           {
             [UrlType.Space]: data.space?.collaboration.calloutsSet,
@@ -202,7 +232,7 @@ const UrlResolverProvider = ({ children }: { children: ReactNode }) => {
         innovationHubId: data.innovationHubId,
 
         // Templates:
-        ...selectUrlParams(
+        ...selectResolvedValues(
           type,
           {
             [UrlType.Space]: data.space?.templatesSet,
@@ -229,6 +259,9 @@ const UrlResolverProvider = ({ children }: { children: ReactNode }) => {
       setValue(resolvingResult);
     }
   }, [resolvingResult]);
+
+  console.log('>>> render');
+  hasBeenCalledRef.current = false;
 
   return <UrlResolverContext.Provider value={value}>{children}</UrlResolverContext.Provider>;
 };
