@@ -1,5 +1,7 @@
 import { FilterConfig, FilterDefinition } from './Filter';
-import React, { ComponentType, ReactNode } from 'react';
+import { ComponentType, ReactNode } from 'react';
+import { Box, Button } from '@mui/material';
+import { Autorenew } from '@mui/icons-material';
 import { EntityFilter } from './EntityFilter';
 import CardsLayout from '@/core/ui/card/cardsLayout/CardsLayout';
 import PageContentBlock from '@/core/ui/content/PageContentBlock';
@@ -47,14 +49,29 @@ const SearchResultSection = <Result extends Identifiable>({
           )
         }
       />
-      <CardsLayout
-        items={loading ? [undefined, undefined] : results}
-        deps={[currentFilter]}
-        cards={false}
-        disablePadding
+
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
       >
-        {result => <Card result={result} />}
-      </CardsLayout>
+        <CardsLayout
+          items={loading ? [undefined, undefined] : results}
+          deps={[currentFilter]}
+          cards={false}
+          disablePadding
+        >
+          {result => <Card result={result} />}
+        </CardsLayout>
+
+        <Button startIcon={<Autorenew />} sx={{ flexLeft: 'auto' }}>
+          {t('buttons.load-more')}
+        </Button>
+      </Box>
     </PageContentBlock>
   );
 };

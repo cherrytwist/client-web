@@ -10,6 +10,7 @@ import { DialogContent } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { useTransactionScope } from '@/core/analytics/SentryTransactionScopeContext';
 import useNavigate from '@/core/routing/useNavigate';
+import Gutters from '@/core/ui/grid/Gutters';
 
 const SearchDialog = () => {
   const { pathname } = useLocation();
@@ -29,14 +30,23 @@ const SearchDialog = () => {
   const { t } = useTranslation();
 
   return (
-    <DialogWithGrid open={isSearchDialogOpen} columns={12}>
+    <DialogWithGrid
+      open // @@@ WIP ~ #7605 - dev purposes
+      // open={isSearchDialogOpen}
+      columns={12}
+    >
       <DialogHeader icon={<Search />} title={t('components.searchDialog.headerTitle')} onClose={handleClose} />
+
       <DialogContent>
-        <SearchView
-          searchRoute={pathname}
-          journeyFilterConfig={journeyFilterConfig}
-          journeyFilterTitle={t('pages.search.journeyFilterTitle')}
-        />
+        <Gutters disablePadding style={{ flexDirection: 'row' }}>
+          {/* <FiltersDescriptionBlock /> */}
+
+          <SearchView
+            searchRoute={pathname}
+            journeyFilterConfig={journeyFilterConfig}
+            journeyFilterTitle={t('pages.search.journeyFilterTitle')}
+          />
+        </Gutters>
       </DialogContent>
     </DialogWithGrid>
   );
