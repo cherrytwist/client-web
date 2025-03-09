@@ -35,8 +35,6 @@ const SearchDialog = () => {
 
       <DialogContent>
         <Gutters disablePadding style={{ flexDirection: 'row' }}>
-          {/* <FiltersDescriptionBlock /> */}
-
           <SearchView
             searchRoute={pathname}
             journeyFilterConfig={journeyFilterConfig}

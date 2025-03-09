@@ -140,7 +140,15 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
   };
 
   const filters = useMemo(
-    () => [...journeyFilter.value, ...contributionFilter.value, ...contributorFilter.value, ...calloutFilter.value],
+    // () => [...journeyFilter.value, ...contributionFilter.value, ...contributorFilter.value, ...calloutFilter.value],
+    () => [
+      {
+        category: 'space',
+        // cursor: '',
+        size: 4,
+        types: 'space',
+      },
+    ],
     [journeyFilter, contributionFilter, contributorFilter, calloutFilter]
   );
 
@@ -156,12 +164,14 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
         terms: termsFromUrl,
         tagsetNames,
         typesFilter: filters,
-        searchInSpaceFilter: spaceId,
+        // searchInSpaceFilter: spaceId,
       },
     },
     fetchPolicy: 'no-cache',
     skip: termsFromUrl.length === 0 || resolvingSpace,
   });
+
+  console.log('@@@ SearchQuery DATA >>>', data);
 
   const results = termsFromUrl.length === 0 ? undefined : toResultType(data);
 
