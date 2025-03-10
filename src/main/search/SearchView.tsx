@@ -1,20 +1,18 @@
-import { useEffect, useMemo, useState, PropsWithChildren } from 'react';
+import { useEffect, useMemo, useState, PropsWithChildren, useCallback } from 'react';
 import { Box, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import useNavigate from '@/core/routing/useNavigate';
-import {
-  SearchCategory,
-  SearchViewProps,
-  SearchFilterInput,
-  SearchViewSections,
-  SearchResultMetaType,
-} from './search.model';
 import {
   useSearchQuery,
   useSearchScopeDetailsSpaceQuery,
   useSpaceUrlResolverQuery,
 } from '@/core/apollo/generated/apollo-hooks';
-import { SearchQuery, SearchResultCalloutFragment, SearchResultType } from '@/core/apollo/generated/graphql-schema';
+import {
+  SearchCategory,
+  // SearchQuery,
+  SearchResultCalloutFragment,
+  SearchResultType,
+} from '@/core/apollo/generated/graphql-schema';
 import PageContentColumn from '@/core/ui/content/PageContentColumn';
 import { useUserContext } from '@/domain/community/user';
 import { calloutFilterConfig, contributionFilterConfig, contributorFilterConfig, FilterDefinition } from './Filter';
@@ -35,9 +33,11 @@ import SearchResultPostChooser from './searchResults/SearchResultPostChooser';
 import SearchResultsCalloutCard from './searchResults/searchResultsCallout/SearchResultsCalloutCard';
 import { Caption } from '@/core/ui/typography';
 import { HubOutlined, DrawOutlined, GroupOutlined, LibraryBooksOutlined } from '@mui/icons-material';
+import { SearchViewProps, SearchFilterInput, SearchViewSections, SearchResultMetaType } from './search.model';
 
 export const MAX_TERMS_SEARCH = 5;
 
+const searchResultsCount = 5;
 const tagsetNames = ['skills', 'keywords'];
 
 const searchResultSectionTypes: Record<keyof SearchViewSections, SearchResultType[]> = {
@@ -72,21 +72,9 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
   const searchTerms = termsFromUrl;
 
   const [journeyFilter, setJourneyFilter] = useState<FilterDefinition>(journeyFilterConfig.all);
+  const [calloutFilter, setCalloutFilter] = useState<FilterDefinition>(calloutFilterConfig.all);
   const [contributionFilter, setContributionFilter] = useState<FilterDefinition>(contributionFilterConfig.all);
   const [contributorFilter, setContributorFilter] = useState<FilterDefinition>(contributorFilterConfig.all);
-  const [calloutFilter, setCalloutFilter] = useState<FilterDefinition>(calloutFilterConfig.all);
-
-  const resetFilters = () => {
-    setJourneyFilter(journeyFilterConfig.all);
-    setContributionFilter(contributionFilterConfig.all);
-    setContributorFilter(contributorFilterConfig.all);
-  };
-
-  useEffect(() => {
-    if (termsFromUrl.length === 0) {
-      resetFilters();
-    }
-  }, [termsFromUrl.length]);
 
   const handleTermsChange = (newValue: string[]) => {
     const params = new URLSearchParams(queryParams);
@@ -109,49 +97,54 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
 
   // @@@ WIP ~ #7605
   const filters: SearchFilterInput[] = useMemo(
-    // () => [...journeyFilter.value, ...contributionFilter.value, ...contributorFilter.value, ...calloutFilter.value],
     () => [
       {
-        category: SearchCategory.SPACES,
-        size: 4,
-        types: undefined,
-        cursor: undefined,
+        category: SearchCategory.Spaces,
+        size: searchResultsCount,
+        types:
+          journeyFilter.value[0] === SearchResultType.Space ? [SearchResultType.Space] : [SearchResultType.Subspace],
+        cursor: data?.search?.spaceResults?.cursor,
+      },
+      {
+        category: SearchCategory.CollaborationTools,
+        size: searchResultsCount,
+        cursor: data?.search?.calloutResults?.cursor,
+      },
+      {
+        category: SearchCategory.Responses,
+        size: searchResultsCount,
+        types:
+          contributionFilter.value[0] === SearchResultType.Post
+            ? [SearchResultType.Post]
+            : [SearchResultType.Whiteboard],
+        cursor: data?.search?.contributionResults?.cursor,
+      },
+      {
+        category: SearchCategory.Contributors,
+        size: searchResultsCount,
+        types:
+          contributorFilter.value[0] === SearchResultType.User
+            ? [SearchResultType.User]
+            : [SearchResultType.Organization],
+        cursor: data?.search?.contributorResults?.cursor,
       },
     ],
     []
-    // [journeyFilter, contributionFilter, contributorFilter, calloutFilter]
   );
-  console.log('filters >>>', filters);
 
   const { data: spaceIdData, loading: resolvingSpace } = useSpaceUrlResolverQuery({
     variables: { spaceNameId: spaceNameId! },
     skip: !spaceNameId,
   });
+
   const spaceId = spaceIdData?.lookupByName.space?.id;
-
-  /**
-   * @@@ WIP ~ #7605:
-   * `filters` трябва да приемене следната форма:
-
-    SearchFilterInput {
-      category: SearchCategory; // *1.1
-      size: number;
-      cursor?: string;
-      types?: SearchResultType[]; // *1.2
-    }
-
-    *
-    *
-    *
-    *
-   */
 
   const { data, loading: isSearching } = useSearchQuery({
     variables: {
       searchData: {
+        filters,
         terms: termsFromUrl,
         tagsetNames,
-        // typesFilter: filters,
         searchInSpaceFilter: spaceId,
       },
     },
@@ -159,29 +152,73 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
     skip: termsFromUrl.length === 0 || resolvingSpace,
   });
 
-  console.log('@@@ SearchQuery DATA >>>', data);
+  console.log('@@@ SearchQuery DATA >>>', data?.search);
 
-  const results = termsFromUrl.length === 0 ? undefined : toResultType(data);
+  const toResultType = useCallback((): SearchResultMetaType[] => {
+    if (!data) {
+      return [];
+    }
 
-  // const { journeyResultsCount, calloutResultsCount, contributorResultsCount, contributionResultsCount } =
-  //   data?.search ?? {};
+    const spaceResults = (data.search.spaceResults?.results || [])
+      .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+      .sort((a, b) => (b.score || 0) - (a.score || 0));
+
+    const contributionResults = (data.search.contributionResults?.results || [])
+      .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+      .sort((a, b) => (b.score || 0) - (a.score || 0));
+
+    const contributorResults = (data.search.contributorResults?.results || [])
+      .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+      .sort((a, b) => (b.score || 0) - (a.score || 0));
+
+    return [...spaceResults, ...contributionResults, ...contributorResults];
+  }, [data]);
+
+  const results = termsFromUrl.length === 0 ? undefined : toResultType();
+
+  const {
+    // journeyResultsCount,
+    //  calloutResultsCount,
+    //  contributorResultsCount,
+    //  contributionResultsCount,
+
+    spaceResults: speisRez,
+    calloutResults: kolRez,
+    contributorResults: contRez,
+    contributionResults: resRez,
+
+    // spaceResults,
+    // calloutResults,
+    // contributorResults,
+    // contributionResults,
+  } = data?.search ?? {};
+
+  console.log('speisRez', speisRez);
+  console.log('kolRez', kolRez);
+  console.log('contRez', contRez);
+  console.log('resRez', resRez);
 
   const { spaceResults, calloutResults, contributionResults, contributorResults }: SearchViewSections = useMemo(
-    () =>
-      groupBy(results, ({ type }) => {
-        return findKey(searchResultSectionTypes, types => types.includes(type));
-      }),
+    () => groupBy(results, ({ type }) => findKey(searchResultSectionTypes, types => types.includes(type))),
     [results]
   );
+  console.log('contributorResults', contributorResults);
+  console.log('contributionResults', contributionResults);
+  console.log('calloutResults', calloutResults);
+  console.log('spaceResults', spaceResults);
 
   const { data: spaceDetails, loading } = useSearchScopeDetailsSpaceQuery({
-    variables: {
-      spaceId: spaceId!,
-    },
+    variables: { spaceId: spaceId! },
     skip: !spaceId,
   });
 
-  const convertedCalloutResults = calloutResults as SearchResultCalloutFragment[];
+  useEffect(() => {
+    if (termsFromUrl.length === 0) {
+      setJourneyFilter(journeyFilterConfig.all);
+      setContributionFilter(contributionFilterConfig.all);
+      setContributorFilter(contributorFilterConfig.all);
+    }
+  }, [termsFromUrl.length]);
 
   return (
     <>
@@ -224,9 +261,11 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
               <SearchResultSection
                 title={journeyFilterTitle}
                 filterTitle={t('pages.search.filter.type.journey')}
-                count={journeyResultsCount}
+                count={0}
+                // count={spaceResults?.total}
                 filterConfig={journeyFilterConfig}
                 results={spaceResults}
+                // results={[]}
                 currentFilter={journeyFilter}
                 onFilterChange={setJourneyFilter}
                 loading={isSearching}
@@ -238,9 +277,11 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
               <SearchResultSection
                 title={t('common.collaborationTools')}
                 filterTitle={t('common.type')}
-                count={calloutResultsCount}
+                count={0}
+                // count={calloutResults?.total}
                 filterConfig={undefined /* TODO: Callout filtering disabled for now calloutFilterConfig */}
-                results={convertedCalloutResults}
+                results={calloutResults as SearchResultCalloutFragment[]}
+                // results={[]}
                 currentFilter={calloutFilter}
                 onFilterChange={setCalloutFilter}
                 loading={isSearching}
@@ -252,9 +293,11 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
               <SearchResultSection
                 title={t('common.contributions')}
                 filterTitle={t('pages.search.filter.type.contribution')}
-                count={contributionResultsCount}
+                count={0}
+                // count={contributionResults?.total}
                 filterConfig={contributionFilterConfig}
                 results={contributionResults}
+                // results={[]}
                 currentFilter={contributionFilter}
                 onFilterChange={setContributionFilter}
                 loading={isSearching}
@@ -266,9 +309,11 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
               <SearchResultSection
                 title={t('common.contributors')}
                 filterTitle={t('pages.search.filter.type.contributor')}
-                count={contributorResultsCount}
+                count={0}
+                // count={contributorResults?.total}
                 filterConfig={contributorFilterConfig}
                 results={contributorResults}
+                // results={[]}
                 currentFilter={contributorFilter}
                 onFilterChange={setContributorFilter}
                 loading={isSearching}
@@ -283,26 +328,6 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
 };
 
 export default SearchView;
-
-const toResultType = (query?: SearchQuery): SearchResultMetaType[] => {
-  if (!query) {
-    return [];
-  }
-
-  const spaceResults = (query.search.spaceResults?.results || [])
-    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
-    .sort((a, b) => (b.score || 0) - (a.score || 0));
-
-  const contributionResults = (query.search.contributionResults?.results || [])
-    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
-    .sort((a, b) => (b.score || 0) - (a.score || 0));
-
-  const contributorResults = (query.search.contributorResults?.results || [])
-    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
-    .sort((a, b) => (b.score || 0) - (a.score || 0));
-
-  return [...spaceResults, ...contributionResults, ...contributorResults];
-};
 
 function SectionWrapper({ children }: PropsWithChildren) {
   return <Box sx={{ display: 'flex', flexDirection: 'row', gap: gutters(1) }}>{children}</Box>;

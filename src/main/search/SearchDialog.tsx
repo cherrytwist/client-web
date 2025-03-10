@@ -30,7 +30,11 @@ const SearchDialog = () => {
   const { t } = useTranslation();
 
   return (
-    <DialogWithGrid open={isSearchDialogOpen} columns={12}>
+    <DialogWithGrid
+      // open
+      open={isSearchDialogOpen}
+      columns={12}
+    >
       <DialogHeader icon={<Search />} title={t('components.searchDialog.headerTitle')} onClose={handleClose} />
 
       <DialogContent>

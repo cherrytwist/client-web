@@ -8,6 +8,7 @@ import {
 } from '@/core/apollo/generated/apollo-hooks';
 import { useUserContext } from '@/domain/community/user';
 import {
+  SearchCategory,
   AuthorizationPrivilege,
   CommunityMembershipStatus,
   SearchResultType,
@@ -64,8 +65,12 @@ const SpaceExplorerContainer = ({ children }: SpaceExplorerContainerProps) => {
       searchData: {
         terms: searchTerms,
         tagsetNames: ['skills', 'keywords'],
-        // searchInSpaceFilter:
-        // typesFilter: [SearchResultType.Space, SearchResultType.Subspace], // @@@ WIP ~ #7605 ?????
+        filters: [
+          {
+            category: SearchCategory.Spaces,
+            size: ITEMS_LIMIT,
+          },
+        ],
       },
     },
     fetchPolicy: 'no-cache',
