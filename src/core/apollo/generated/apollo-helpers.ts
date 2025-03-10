@@ -1420,26 +1420,24 @@ export type GroupableKeySpecifier = ('groups' | GroupableKeySpecifier)[];
 export type GroupableFieldPolicy = {
   groups?: FieldPolicy<any> | FieldReadFunction<any>;
 };
+export type ISearchCategoryResultKeySpecifier = ('cursor' | 'results' | 'total' | ISearchCategoryResultKeySpecifier)[];
+export type ISearchCategoryResultFieldPolicy = {
+  cursor?: FieldPolicy<any> | FieldReadFunction<any>;
+  results?: FieldPolicy<any> | FieldReadFunction<any>;
+  total?: FieldPolicy<any> | FieldReadFunction<any>;
+};
 export type ISearchResultsKeySpecifier = (
   | 'calloutResults'
-  | 'calloutResultsCount'
   | 'contributionResults'
-  | 'contributionResultsCount'
   | 'contributorResults'
-  | 'contributorResultsCount'
   | 'spaceResults'
-  | 'spaceResultsCount'
   | ISearchResultsKeySpecifier
 )[];
 export type ISearchResultsFieldPolicy = {
   calloutResults?: FieldPolicy<any> | FieldReadFunction<any>;
-  calloutResultsCount?: FieldPolicy<any> | FieldReadFunction<any>;
   contributionResults?: FieldPolicy<any> | FieldReadFunction<any>;
-  contributionResultsCount?: FieldPolicy<any> | FieldReadFunction<any>;
   contributorResults?: FieldPolicy<any> | FieldReadFunction<any>;
-  contributorResultsCount?: FieldPolicy<any> | FieldReadFunction<any>;
   spaceResults?: FieldPolicy<any> | FieldReadFunction<any>;
-  spaceResultsCount?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type InAppNotificationKeySpecifier = (
   | 'category'
@@ -3864,8 +3862,14 @@ export type UserFieldPolicy = {
   storageAggregator?: FieldPolicy<any> | FieldReadFunction<any>;
   updatedDate?: FieldPolicy<any> | FieldReadFunction<any>;
 };
-export type UserAuthenticationResultKeySpecifier = ('createdAt' | 'method' | UserAuthenticationResultKeySpecifier)[];
+export type UserAuthenticationResultKeySpecifier = (
+  | 'authenticatedAt'
+  | 'createdAt'
+  | 'method'
+  | UserAuthenticationResultKeySpecifier
+)[];
 export type UserAuthenticationResultFieldPolicy = {
+  authenticatedAt?: FieldPolicy<any> | FieldReadFunction<any>;
   createdAt?: FieldPolicy<any> | FieldReadFunction<any>;
   method?: FieldPolicy<any> | FieldReadFunction<any>;
 };
@@ -4534,6 +4538,10 @@ export type StrictTypedTypePolicies = {
   Groupable?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
     keyFields?: false | GroupableKeySpecifier | (() => undefined | GroupableKeySpecifier);
     fields?: GroupableFieldPolicy;
+  };
+  ISearchCategoryResult?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+    keyFields?: false | ISearchCategoryResultKeySpecifier | (() => undefined | ISearchCategoryResultKeySpecifier);
+    fields?: ISearchCategoryResultFieldPolicy;
   };
   ISearchResults?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
     keyFields?: false | ISearchResultsKeySpecifier | (() => undefined | ISearchResultsKeySpecifier);

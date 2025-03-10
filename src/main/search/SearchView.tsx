@@ -155,7 +155,7 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
       searchData: {
         terms: termsFromUrl,
         tagsetNames,
-        types: filters,
+        filters,
         searchInSpaceFilter: spaceId,
       },
     },
