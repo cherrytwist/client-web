@@ -35,7 +35,12 @@ import Gutters from '@/core/ui/grid/Gutters';
 import SearchableList, { SearchableListItem } from '@/domain/platform/admin/components/SearchableList';
 import EntityConfirmDeleteDialog from '../SpaceSettings/EntityConfirmDeleteDialog';
 import CreateTemplateDialog from '@/domain/templates/components/Dialogs/CreateEditTemplateDialog/CreateTemplateDialog';
-import { AuthorizationPrivilege, TemplateDefaultType, TemplateType } from '@/core/apollo/generated/graphql-schema';
+import {
+  AuthorizationPrivilege,
+  SpaceLevel,
+  TemplateDefaultType,
+  TemplateType,
+} from '@/core/apollo/generated/graphql-schema';
 import { CollaborationTemplateFormSubmittedValues } from '@/domain/templates/components/Forms/CollaborationTemplateForm';
 import { useCreateCollaborationTemplate } from '@/domain/templates/hooks/useCreateCollaborationTemplate';
 import { useSubspaceCreation } from '@/domain/shared/utils/useSubspaceCreation/useSubspaceCreation';
@@ -225,7 +230,7 @@ export const SubspaceListView = () => {
     </>
   );
 
-  const level = ProfileType.Challenge;
+  const level = SpaceLevel.L1;
 
   return (
     <>

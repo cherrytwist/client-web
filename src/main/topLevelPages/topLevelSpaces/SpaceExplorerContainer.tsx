@@ -64,7 +64,8 @@ const SpaceExplorerContainer = ({ children }: SpaceExplorerContainerProps) => {
       searchData: {
         terms: searchTerms,
         tagsetNames: ['skills', 'keywords'],
-        typesFilter: [SearchResultType.Space, SearchResultType.Subspace],
+        // searchInSpaceFilter:
+        // typesFilter: [SearchResultType.Space, SearchResultType.Subspace], // @@@ WIP ~ #7605 ?????
       },
     },
     fetchPolicy: 'no-cache',
@@ -148,7 +149,7 @@ const SpaceExplorerContainer = ({ children }: SpaceExplorerContainerProps) => {
 
   const flattenedSpaces = useMemo<SpaceWithParent[] | undefined>(() => {
     if (shouldSearch) {
-      return rawSearchResults?.search?.journeyResults.map(result => {
+      return rawSearchResults?.search?.spaceResults?.results.map(result => {
         const entry = result as TypedSearchResult<SearchResultType.Space, SpaceExplorerSearchSpaceFragment>;
 
         if (entry.type === SearchResultType.Space || entry.type === SearchResultType.Subspace) {

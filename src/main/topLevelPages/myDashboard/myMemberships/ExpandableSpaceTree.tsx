@@ -35,7 +35,7 @@ export const ExpandableSpaceTree = ({ membership }: { membership: MembershipProp
 
   const paddingLeftMap = {
     [SpaceLevel.L0]: 0,
-    [ProfileType.Challenge]: 5,
+    [SpaceLevel.L1]: 5,
     [SpaceLevel.L2]: 10,
   };
   const {

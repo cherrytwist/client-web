@@ -163,8 +163,8 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
 
   const results = termsFromUrl.length === 0 ? undefined : toResultType(data);
 
-  const { journeyResultsCount, calloutResultsCount, contributorResultsCount, contributionResultsCount } =
-    data?.search ?? {};
+  // const { journeyResultsCount, calloutResultsCount, contributorResultsCount, contributionResultsCount } =
+  //   data?.search ?? {};
 
   const { spaceResults, calloutResults, contributionResults, contributorResults }: SearchViewSections = useMemo(
     () =>
@@ -289,33 +289,19 @@ const toResultType = (query?: SearchQuery): SearchResultMetaType[] => {
     return [];
   }
 
-  const spaceResults = (query.search.journeyResults || [])
-    .map<SearchResultMetaType>(
-      ({ score, terms, ...rest }) => ({ ...rest, score: score || 0, terms: terms || [] } as SearchResultMetaType),
-      []
-    )
-    .sort((a, b) => (b?.score || 0) - (a?.score || 0));
+  const spaceResults = (query.search.spaceResults?.results || [])
+    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+    .sort((a, b) => (b.score || 0) - (a.score || 0));
 
-  const contributionResults = (query.search.contributionResults || [])
-    .map<SearchResultMetaType>(
-      ({ score, terms, ...rest }) => ({ ...rest, score: score || 0, terms: terms || [] } as SearchResultMetaType),
-      []
-    )
-    .sort((a, b) => (b?.score || 0) - (a?.score || 0));
+  const contributionResults = (query.search.contributionResults?.results || [])
+    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+    .sort((a, b) => (b.score || 0) - (a.score || 0));
 
-  const contributorResults = (query.search.contributorResults || [])
-    .map<SearchResultMetaType>(
-      ({ score, terms, ...rest }) => ({ ...rest, score: score || 0, terms: terms || [] } as SearchResultMetaType),
-      []
-    )
-    .sort((a, b) => (b?.score || 0) - (a?.score || 0));
+  const contributorResults = (query.search.contributorResults?.results || [])
+    .map(({ score, terms, ...rest }): SearchResultMetaType => ({ ...rest, score: score || 0, terms: terms || [] }))
+    .sort((a, b) => (b.score || 0) - (a.score || 0));
 
-  const calloutResults = (query.search.calloutResults || []).map<SearchResultMetaType>(
-    ({ score, terms, ...rest }) => ({ ...rest, score: score || 0, terms: terms || [] } as SearchResultMetaType),
-    []
-  );
-
-  return calloutResults.concat(contributorResults).concat(spaceResults).concat(contributionResults);
+  return [...spaceResults, ...contributionResults, ...contributorResults];
 };
 
 function SectionWrapper({ children }: PropsWithChildren) {

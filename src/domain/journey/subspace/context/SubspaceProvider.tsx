@@ -30,7 +30,7 @@ interface SubspaceContextProps {
 
 export const SubspaceContext = React.createContext<SubspaceContextProps>({
   loading: true,
-  level: ProfileType.Challenge,
+  level: SpaceLevel.L1,
   subspaceId: '',
   communityId: '',
   roleSetId: '',
@@ -110,7 +110,7 @@ const SubspaceProvider: FC<SubspaceProviderProps> = ({ children }) => {
     <SubspaceContext.Provider
       value={{
         subspace,
-        level: subspace?.level || ProfileType.Challenge,
+        level: subspace?.level || SpaceLevel.L1,
         subspaceId: spaceId ?? '',
         communityId,
         roleSetId,

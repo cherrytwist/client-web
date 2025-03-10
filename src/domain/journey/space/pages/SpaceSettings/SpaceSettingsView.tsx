@@ -233,7 +233,7 @@ export const SpaceSettingsView = ({ spaceLevel }: SpaceSettingsViewProps) => {
         });
         break;
       }
-      case ProfileType.Challenge: {
+      case SpaceLevel.L1: {
         await updateSpaceSettings({
           variables: {
             settingsData: {

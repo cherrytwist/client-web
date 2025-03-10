@@ -53,10 +53,7 @@ const ExploreSpacesContainer = ({ searchTerms, selectedFilter, children }: Explo
       searchData: {
         terms: getTerms(searchTerms, selectedFilter),
         tagsetNames: ['skills', 'keywords'],
-        typesFilter: ['space'],
-        // typesFilter: [SearchResultType.Space],
         searchInSpaceFilter: selectedFilter === SpacesExplorerMembershipFilter.All ? undefined : selectedFilter,
-        // categories: [SearchCategory.Spaces],
       },
     },
     fetchPolicy: 'no-cache',
@@ -91,8 +88,8 @@ const ExploreSpacesContainer = ({ searchTerms, selectedFilter, children }: Explo
   const hasMore = false;
 
   const flattenedSpaces = useMemo<SpaceWithParent[] | undefined>(() => {
-    if (shouldSearch && rawSearchResults?.search?.journeyResults) {
-      return rawSearchResults.search.journeyResults
+    if (shouldSearch && rawSearchResults?.search?.spaceResults?.results) {
+      return rawSearchResults.search.spaceResults.results
         .filter(
           (journey): journey is TypedSearchResult<SearchResultType.Space, ExploreSpacesSearchFragment> =>
             journey.type === SearchResultType.Space

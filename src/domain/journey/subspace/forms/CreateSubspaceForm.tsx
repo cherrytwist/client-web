@@ -18,7 +18,7 @@ import SubspaceTemplateSelector from '@/domain/templates/components/TemplateSele
 import Gutters from '@/core/ui/grid/Gutters';
 import PageContentBlock from '@/core/ui/content/PageContentBlock';
 import FormikVisualUpload from '@/core/ui/upload/FormikVisualUpload/FormikVisualUpload';
-import { VisualType } from '@/core/apollo/generated/graphql-schema';
+import { SpaceLevel, VisualType } from '@/core/apollo/generated/graphql-schema';
 import { Theme, useMediaQuery } from '@mui/material';
 import { gutters } from '@/core/ui/grid/utils';
 
@@ -77,11 +77,11 @@ export const CreateSubspaceForm = ({
       .trim()
       .min(3, MessageWithPayload('forms.validations.minLength'))
       .max(SMALL_TEXT_LENGTH, MessageWithPayload('forms.validations.maxLength')),
-    background: MarkdownValidator(MARKDOWN_TEXT_LENGTH),
+    description: MarkdownValidator(MARKDOWN_TEXT_LENGTH),
     tags: yup.array().of(yup.string().min(2)).notRequired(),
     collaborationTemplateId: yup.string().nullable(),
   });
-  const level = ProfileType.Challenge;
+  const level = SpaceLevel.L1;
 
   return (
     <Formik
@@ -109,7 +109,7 @@ export const CreateSubspaceForm = ({
             maxLength={SMALL_TEXT_LENGTH}
           />
           <FormikMarkdownField
-            name="background"
+            name="description"
             title={t(`context.${level}.description.title`)}
             rows={5}
             helperText={t(`context.${level}.description.description`)}

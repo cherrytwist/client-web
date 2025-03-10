@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import EntitySettingsLayout from '../layout/EntitySettingsLayout/EntitySettingsLayout';
 import { TabDefinition } from '../layout/EntitySettingsLayout/EntitySettingsTabs';
 import { SettingsSection } from '../layout/EntitySettingsLayout/SettingsSection';
+import { SpaceLevel } from '@/core/apollo/generated/graphql-schema';
 
 interface SubspaceSettingsLayoutProps extends PropsWithChildren {
   currentTab: SettingsSection;
@@ -44,7 +45,7 @@ const SubspaceSettingsLayout: FC<SubspaceSettingsLayoutProps> = props => {
       },
     ];
 
-    if (spaceLevel === ProfileType.Challenge) {
+    if (spaceLevel === SpaceLevel.L1) {
       tabs.push({
         section: SettingsSection.Subsubspaces,
         route: 'opportunities',

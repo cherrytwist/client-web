@@ -192,7 +192,7 @@ const DashboardNavigation = ({
   const hasCreate =
     !compact &&
     Boolean(onCreateSubspace) &&
-    level === ProfileType.Challenge &&
+    level === SpaceLevel.L1 &&
     Boolean(currentItemId) &&
     dashboardNavigationRoot?.canCreateSubspace;
 
