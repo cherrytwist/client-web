@@ -1,4 +1,3 @@
-import { SpaceLevel } from '@/core/apollo/generated/graphql-schema';
 import BackButton from '@/core/ui/actions/BackButton';
 import RouterLink from '@/core/ui/link/RouterLink';
 import ChildJourneyPageBanner from '@/domain/journey/common/childJourneyPageBanner/ChildJourneyPageBanner';
@@ -45,7 +44,7 @@ const SubspaceSettingsLayout: FC<SubspaceSettingsLayoutProps> = props => {
       },
     ];
 
-    if (spaceLevel === SpaceLevel.L1) {
+    if (spaceLevel === ProfileType.Challenge) {
       tabs.push({
         section: SettingsSection.Subsubspaces,
         route: 'opportunities',

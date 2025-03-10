@@ -18,7 +18,7 @@ import SubspaceTemplateSelector from '@/domain/templates/components/TemplateSele
 import Gutters from '@/core/ui/grid/Gutters';
 import PageContentBlock from '@/core/ui/content/PageContentBlock';
 import FormikVisualUpload from '@/core/ui/upload/FormikVisualUpload/FormikVisualUpload';
-import { SpaceLevel, VisualType } from '@/core/apollo/generated/graphql-schema';
+import { VisualType } from '@/core/apollo/generated/graphql-schema';
 import { Theme, useMediaQuery } from '@mui/material';
 import { gutters } from '@/core/ui/grid/utils';
 
@@ -81,7 +81,7 @@ export const CreateSubspaceForm = ({
     tags: yup.array().of(yup.string().min(2)).notRequired(),
     collaborationTemplateId: yup.string().nullable(),
   });
-  const level = SpaceLevel.L1;
+  const level = ProfileType.Challenge;
 
   return (
     <Formik

@@ -8,7 +8,7 @@ const SubspaceSettingsRoute = () => {
   const { spaceLevel, loading } = useUrlResolver();
 
   switch (spaceLevel) {
-    case SpaceLevel.L1:
+    case ProfileType.Challenge:
       return <ChallengeRoute />;
     case SpaceLevel.L2:
       return <OpportunityRoute />;

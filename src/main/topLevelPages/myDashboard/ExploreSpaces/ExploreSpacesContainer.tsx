@@ -7,7 +7,7 @@ import {
   useWelcomeSpaceQuery,
 } from '@/core/apollo/generated/apollo-hooks';
 import { ExploreSpacesSearchFragment, SearchResultType } from '@/core/apollo/generated/graphql-schema';
-import { TypedSearchResult } from '@/main/search/SearchView';
+import { TypedSearchResult } from '@/main/search/search.model';
 import { SpacesExplorerMembershipFilter } from './ExploreSpacesView';
 import { ExploreSpacesContainerProps, SpaceWithParent } from './ExploreSpacesTypes';
 
@@ -53,7 +53,8 @@ const ExploreSpacesContainer = ({ searchTerms, selectedFilter, children }: Explo
       searchData: {
         terms: getTerms(searchTerms, selectedFilter),
         tagsetNames: ['skills', 'keywords'],
-        typesFilter: [SearchResultType.Space],
+        typesFilter: ['space'],
+        // typesFilter: [SearchResultType.Space],
         searchInSpaceFilter: selectedFilter === SpacesExplorerMembershipFilter.All ? undefined : selectedFilter,
         // categories: [SearchCategory.Spaces],
       },

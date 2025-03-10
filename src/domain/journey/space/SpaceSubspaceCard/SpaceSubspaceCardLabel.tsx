@@ -13,7 +13,7 @@ interface SpaceSubspaceCardLabelProps {
 const SpaceSubspaceCardLabel = ({ type, member, isPrivate }: SpaceSubspaceCardLabelProps) => {
   const { t } = useTranslation();
 
-  const isSubspace = type !== ProfileType.Space;
+  const isSubspace = type !== ProfileType.SpaceAbout;
   const spaceTypeName = isSubspace ? t('common.subspace') : t('common.space');
   const labelType = member ? 'member' : isPrivate ? 'private' : 'public';
   const label = t(`components.card.privacy.${labelType}` as const, { entity: spaceTypeName });

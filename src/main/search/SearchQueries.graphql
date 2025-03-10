@@ -3,10 +3,9 @@ query search($searchData: SearchInput!) {
     contributorResults {
       cursor
       results {
-        id
         score
         terms
-        type
+        # type
         ... on SearchResultUser {
           ...SearchResultUser
         }
@@ -16,13 +15,13 @@ query search($searchData: SearchInput!) {
       }
       total
     }
+
     contributionResults {
       cursor
       results {
-        id
         score
         terms
-        type
+        # type
         ... on SearchResultUser {
           ...SearchResultUser
         }
@@ -32,13 +31,13 @@ query search($searchData: SearchInput!) {
       }
       total
     }
+
     spaceResults {
       cursor
       results {
-        id
         score
         terms
-        type
+        # type
         ... on SearchResultUser {
           ...SearchResultUser
         }
@@ -48,13 +47,13 @@ query search($searchData: SearchInput!) {
       }
       total
     }
+
     calloutResults {
       cursor
       results {
-        id
         score
         terms
-        type
+        # type
         ... on SearchResultUser {
           ...SearchResultUser
         }

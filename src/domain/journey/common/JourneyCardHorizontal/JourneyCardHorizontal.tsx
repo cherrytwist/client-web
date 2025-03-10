@@ -65,7 +65,7 @@ const Wrapper = <D extends React.ElementType = ListItemButtonTypeMap['defaultCom
 
 const JourneyCardHorizontal = ({
   space,
-  deepness = !space.level || space.level === SpaceLevel.L1 ? 0 : 1,
+  deepness = !space.level || space.level === ProfileType.Challenge ? 0 : 1,
   seamless,
   sx,
   actions,

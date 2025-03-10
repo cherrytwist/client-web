@@ -22,6 +22,6 @@ export default spaceIcon;
 
 export const spaceLevelIcon: Record<SpaceLevel, ComponentType<SvgIconProps>> = {
   [SpaceLevel.L0]: SpaceIcon,
-  [SpaceLevel.L1]: SubspaceIcon,
+  [ProfileType.Challenge]: SubspaceIcon,
   [SpaceLevel.L2]: OpportunityIcon,
 };

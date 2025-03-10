@@ -47,7 +47,7 @@ export const getProfileIcon = (profileType: ProfileType): ComponentType<SvgIconP
       return CorporateFareOutlined;
     case ProfileType.Post:
       return calloutIcons.POST;
-    case ProfileType.Space:
+    case ProfileType.SpaceAbout:
       return SpaceIcon;
     case ProfileType.User:
       return PersonOutline;

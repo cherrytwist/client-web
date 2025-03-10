@@ -89,7 +89,7 @@ const WhiteboardDialogFooter = ({
     switch (spaceLevel) {
       case SpaceLevel.L0:
         return spaceContext.about.profile;
-      case SpaceLevel.L1:
+      case ProfileType.Challenge:
         return subspaceContext.about.profile;
     }
   };

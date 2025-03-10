@@ -58,7 +58,7 @@ const searchResults: SearchResult[] = [
           url: '/space1',
         },
       },
-      level: SpaceLevel.L1,
+      level: ProfileType.Challenge,
     },
   },
   {

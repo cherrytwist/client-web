@@ -18,7 +18,7 @@ const SpaceSettingsPage: FC<SettingsPageProps> = ({ routePrefix = '../' }) => {
           {loading ? <Skeleton /> : <SpaceSettingsView spaceLevel={spaceLevel} />}
         </SpaceSettingsLayout>
       );
-    case SpaceLevel.L1:
+    case ProfileType.Challenge:
       return (
         <SubspaceSettingsLayout currentTab={SettingsSection.SpaceSettings} tabRoutePrefix={routePrefix}>
           {loading ? <Skeleton /> : <SpaceSettingsView spaceLevel={spaceLevel} />}

@@ -56,7 +56,7 @@ interface Provided {
 
 export const getStorageAggregatorParentIcon = (level: SpaceLevel | undefined) => {
   switch (level) {
-    case SpaceLevel.L1:
+    case ProfileType.Challenge:
       return SubspaceIcon;
     case SpaceLevel.L2:
       return OpportunityIcon;

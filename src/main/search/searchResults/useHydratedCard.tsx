@@ -13,7 +13,7 @@ import { RoleType } from '@/domain/community/user/constants/RoleType';
 import { getVisualByType } from '@/domain/common/visual/utils/visuals.utils';
 import { useUserRolesSearchCardsQuery } from '@/core/apollo/generated/apollo-hooks';
 import { useUserContext } from '@/domain/community/user/hooks/useUserContext';
-import { TypedSearchResult } from '../SearchView';
+import { TypedSearchResult } from '../search.model';
 import { SearchContributionCardCard } from '@/domain/shared/components/search-cards/SearchContributionPostCard';
 import { SubspaceIcon } from '@/domain/journey/subspace/icon/SubspaceIcon';
 import { SpaceIcon } from '@/domain/journey/space/icon/SpaceIcon';

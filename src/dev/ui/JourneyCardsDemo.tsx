@@ -7,7 +7,7 @@ import PageContentBlockGrid from '@/core/ui/content/PageContentBlockGrid';
 import SpaceCard from '@/domain/journey/space/SpaceCard/SpaceCard';
 import PageContentBlockHeader from '@/core/ui/content/PageContentBlockHeader';
 import SpaceSubspaceCard from '@/domain/journey/space/SpaceSubspaceCard/SpaceSubspaceCard';
-import { ProfileType } from '@/core/apollo/generated/graphql-schema';
+import { ProfileType, SpaceLevel } from '@/core/apollo/generated/graphql-schema';
 import SubspaceCard from '@/domain/journey/subspace/subspaceCard/SubspaceCard';
 import UserCard from '@/domain/community/user/userCard/UserCard';
 
@@ -40,7 +40,7 @@ const JourneyCardsDemo = () => {
                 journeyUri=""
                 spaceDisplayName="Parent Space"
                 spaceUri=""
-                type={ProfileType.Challenge}
+                type={SpaceLevel.L1}
                 avatarUris={['', '']}
                 locked
               />
@@ -53,7 +53,7 @@ const JourneyCardsDemo = () => {
                 journeyUri=""
                 spaceDisplayName=""
                 spaceUri=""
-                type={ProfileType.Space}
+                type={ProfileType.SpaceAbout}
                 isPrivate
                 avatarUris={['']}
               />

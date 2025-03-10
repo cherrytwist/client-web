@@ -1,31 +1,23 @@
-import { ReactNode, useEffect, useMemo, useState, PropsWithChildren } from 'react';
+import { useEffect, useMemo, useState, PropsWithChildren } from 'react';
 import { Box, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import useNavigate from '@/core/routing/useNavigate';
+import {
+  SearchCategory,
+  SearchViewProps,
+  SearchFilterInput,
+  SearchViewSections,
+  SearchResultMetaType,
+} from './search.model';
 import {
   useSearchQuery,
   useSearchScopeDetailsSpaceQuery,
   useSpaceUrlResolverQuery,
 } from '@/core/apollo/generated/apollo-hooks';
-import {
-  SearchQuery,
-  SearchResult,
-  SearchResultCalloutFragment,
-  SearchResultOrganizationFragment,
-  SearchResultPostFragment,
-  SearchResultSpaceFragment,
-  SearchResultType,
-  SearchResultUserFragment,
-} from '@/core/apollo/generated/graphql-schema';
+import { SearchQuery, SearchResultCalloutFragment, SearchResultType } from '@/core/apollo/generated/graphql-schema';
 import PageContentColumn from '@/core/ui/content/PageContentColumn';
 import { useUserContext } from '@/domain/community/user';
-import {
-  calloutFilterConfig,
-  contributionFilterConfig,
-  contributorFilterConfig,
-  FilterConfig,
-  FilterDefinition,
-} from './Filter';
+import { calloutFilterConfig, contributionFilterConfig, contributorFilterConfig, FilterDefinition } from './Filter';
 import MultipleSelect from '@/core/ui/search/MultipleSelect';
 import SearchResultSection from './SearchResultSection';
 import { useQueryParams } from '@/core/routing/useQueryParams';
@@ -47,30 +39,6 @@ import { HubOutlined, DrawOutlined, GroupOutlined, LibraryBooksOutlined } from '
 export const MAX_TERMS_SEARCH = 5;
 
 const tagsetNames = ['skills', 'keywords'];
-
-export type TypedSearchResult<Type extends SearchResultType, ResultFragment extends {}> = SearchResult &
-  ResultFragment & { type: Type };
-
-export type SearchResultMetaType =
-  | TypedSearchResult<SearchResultType.User, SearchResultUserFragment>
-  | TypedSearchResult<SearchResultType.Organization, SearchResultOrganizationFragment>
-  | TypedSearchResult<SearchResultType.Post, SearchResultPostFragment>
-  | TypedSearchResult<SearchResultType.Space, SearchResultSpaceFragment>
-  | TypedSearchResult<SearchResultType.Subspace, SearchResultSpaceFragment>
-  | TypedSearchResult<SearchResultType.Callout, SearchResultCalloutFragment>;
-
-interface SearchViewProps {
-  searchRoute: string;
-  journeyFilterConfig: FilterConfig;
-  journeyFilterTitle: ReactNode;
-}
-
-interface SearchViewSections {
-  spaceResults?: SearchResultMetaType[];
-  calloutResults?: SearchResultMetaType[];
-  contributionResults?: SearchResultMetaType[];
-  contributorResults?: SearchResultMetaType[];
-}
 
 const searchResultSectionTypes: Record<keyof SearchViewSections, SearchResultType[]> = {
   spaceResults: [SearchResultType.Space, SearchResultType.Subspace],
@@ -139,18 +107,21 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
     navigate(`${searchRoute}?${params}`);
   };
 
-  const filters = useMemo(
+  // @@@ WIP ~ #7605
+  const filters: SearchFilterInput[] = useMemo(
     // () => [...journeyFilter.value, ...contributionFilter.value, ...contributorFilter.value, ...calloutFilter.value],
     () => [
       {
-        category: 'space',
-        // cursor: '',
+        category: SearchCategory.SPACES,
         size: 4,
-        types: 'space',
+        types: undefined,
+        cursor: undefined,
       },
     ],
-    [journeyFilter, contributionFilter, contributorFilter, calloutFilter]
+    []
+    // [journeyFilter, contributionFilter, contributorFilter, calloutFilter]
   );
+  console.log('filters >>>', filters);
 
   const { data: spaceIdData, loading: resolvingSpace } = useSpaceUrlResolverQuery({
     variables: { spaceNameId: spaceNameId! },
@@ -158,13 +129,30 @@ const SearchView = ({ searchRoute, journeyFilterConfig, journeyFilterTitle }: Se
   });
   const spaceId = spaceIdData?.lookupByName.space?.id;
 
+  /**
+   * @@@ WIP ~ #7605:
+   * `filters` трябва да приемене следната форма:
+
+    SearchFilterInput {
+      category: SearchCategory; // *1.1
+      size: number;
+      cursor?: string;
+      types?: SearchResultType[]; // *1.2
+    }
+
+    *
+    *
+    *
+    *
+   */
+
   const { data, loading: isSearching } = useSearchQuery({
     variables: {
       searchData: {
         terms: termsFromUrl,
         tagsetNames,
-        typesFilter: filters,
-        // searchInSpaceFilter: spaceId,
+        // typesFilter: filters,
+        searchInSpaceFilter: spaceId,
       },
     },
     fetchPolicy: 'no-cache',
